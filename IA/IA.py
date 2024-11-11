@@ -6,7 +6,7 @@ import requests
 # Conectar a la base de datos SQLite
 def connect_to_db():
     return sqlite3.connect('students.db')
-
+#hola sou sergio
 # Función para obtener horarios desde la base de datos
 def obtener_horarios():
     try:
