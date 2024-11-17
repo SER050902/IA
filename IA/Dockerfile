@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copia el archivo de código a /app
-COPY . /app
+COPY .. /app
 
 # Instala las dependencias de Python necesarias
 RUN pip install requests
