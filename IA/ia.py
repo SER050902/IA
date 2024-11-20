@@ -104,15 +104,16 @@ def ask_openai(question, context):
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
-                {"role": "system", "content": "Eres un asistente que responde preguntas académicas de manera precisa."},
+                {"role": "system", "content": "Eres un asistente académico que responde preguntas de forma detallada y clara. Utiliza el contexto disponible para enriquecer tus respuestas, pero sé flexible y natural."},
                 {"role": "user", "content": f"Contexto: {context}\nPregunta: {question}"}
             ],
             temperature=0.7,
-            max_tokens=150
+            max_tokens=300
         )
         return response.choices[0].message['content'].strip()
     except Exception as e:
         return f"Error al conectar con OpenAI: {e}"
+
 
 
 # Función principal para manejar preguntas
@@ -123,11 +124,9 @@ def handle_question(question):
     student_name, dates = extract_entities_and_dates(question)
 
     if student_name:
-        context = query_database(student_name)
-        if "No hay" in context or "Error" in context:
-            return ask_openai(question, context)
-
-        return context
+        context = query_database(student_name)  # Consultar base de datos para construir un contexto
+        # Aquí llamamos a OpenAI incluso si hay contexto disponible
+        return ask_openai(question, context)
     else:
         return "No pude identificar el nombre del estudiante en tu pregunta. Por favor, especifica mejor."
 
