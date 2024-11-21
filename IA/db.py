@@ -1,35 +1,30 @@
 import sqlite3
 
-# Ruta de la base de datos
+# Ruta de la base de datos SQLite
 DATABASE_PATH = 'students.db'
 
+# Función para conectar a la base de datos
+def connect_to_db():
+    try:
+        return sqlite3.connect(DATABASE_PATH)
+    except sqlite3.Error as e:
+        print(f"Error al conectar con la base de datos: {e}")
+        return None
 
-def insert_sample_data():
-    conn = sqlite3.connect(DATABASE_PATH)
-    cursor = conn.cursor()
+# Función para borrar la tabla 'ufs'
+def drop_ufs_table():
+    conn = connect_to_db()
+    if not conn:
+        return "No se pudo establecer conexión con la base de datos."
 
-    # Insertar estudiantes
-    cursor.execute("INSERT INTO students (name, email, date_of_birth) VALUES (?, ?, ?)",
-                   ("Juan Pérez", "juanperez@email.com", "2000-05-15"))
-    cursor.execute("INSERT INTO students (name, email, date_of_birth) VALUES (?, ?, ?)",
-                   ("Ana García", "anagarcia@email.com", "1999-10-10"))
+    try:
+        cursor = conn.cursor()
+        cursor.execute("DROP TABLE IF EXISTS ufs")  # Borrar la tabla 'ufs' si existe
+        conn.commit()
+        conn.close()
+        return "La tabla 'ufs' ha sido eliminada con éxito."
+    except sqlite3.Error as e:
+        return f"Error al eliminar la tabla 'ufs': {e}"
 
-    # Insertar exámenes
-    cursor.execute("INSERT INTO exams (student_name, exam_date, grade) VALUES (?, ?, ?)",
-                   ("Juan Pérez", "2024-06-15", 8.5))
-    cursor.execute("INSERT INTO exams (student_name, exam_date, grade) VALUES (?, ?, ?)",
-                   ("Ana García", "2024-06-16", 9.0))
-
-    # Insertar notas
-    cursor.execute("INSERT INTO notas (alumno_id, modulo, nota) VALUES (?, ?, ?)", (1, "Matemáticas", 7.5))
-    cursor.execute("INSERT INTO notas (alumno_id, modulo, nota) VALUES (?, ?, ?)", (1, "Física", 8.0))
-    cursor.execute("INSERT INTO notas (alumno_id, modulo, nota) VALUES (?, ?, ?)", (2, "Matemáticas", 9.5))
-    cursor.execute("INSERT INTO notas (alumno_id, modulo, nota) VALUES (?, ?, ?)", (2, "Física", 9.0))
-
-    conn.commit()
-    conn.close()
-
-
-# Llamar a la función para insertar datos de ejemplo
-insert_sample_data()
-
+# Llamar a la función para eliminar la tabla
+print(drop_ufs_table())
