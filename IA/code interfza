@@ -149,7 +149,7 @@ style.theme_use("clam")
 style.configure("TLabel", font=("Arial", 12), background="#2b2b2b", foreground="#e1e1e1")
 style.configure("BoldLabel.TLabel", font=("Arial", 14, "bold"), background="#2b2b2b", foreground="#ffffff")
 style.configure("TButton", font=("Arial", 12), background="#0078d7", foreground="#ffffff", padding=8)
-style.configure("Header.TLabel", font=("Arial", 20, "bold"), background="#2b2b2b", foreground="#ff4d4d")
+style.configure("Header.TLabel", font=("Arial", 20, "bold"), background="#2b2b2b", foreground="#ffffff")
 style.configure("TFrame", background="#2b2b2b")
 
 # Encabezado
