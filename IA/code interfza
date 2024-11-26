@@ -140,15 +140,16 @@ def consultar_ia():
 root = tk.Tk()
 root.title("Sistema Académico con IA")
 root.geometry("900x600")
-root.configure(bg="#ffffff")
+root.configure(bg="#2b2b2b")  # Fondo oscuro
 root.resizable(False, False)
 
-# Estilo moderno
+# Estilo oscuro
 style = ttk.Style()
 style.theme_use("clam")
-style.configure("TLabel", font=("Arial", 12), background="#ffffff")
-style.configure("TButton", font=("Arial", 12), background="#0078d7", foreground="white", padding=8)
-style.configure("Header.TLabel", font=("Arial", 16, "bold"), foreground="#444")
+style.configure("TLabel", font=("Arial", 12), background="#2b2b2b", foreground="#e1e1e1")
+style.configure("TButton", font=("Arial", 12), background="#0078d7", foreground="#ffffff", padding=8)
+style.configure("Header.TLabel", font=("Arial", 16, "bold"), background="#2b2b2b", foreground="#ffffff")
+style.configure("TFrame", background="#2b2b2b")
 
 # Encabezado
 header_frame = ttk.Frame(root, padding="20", style="TFrame")
@@ -157,13 +158,13 @@ header_label = ttk.Label(header_frame, text="Sistema Académico Asistido por IA"
 header_label.pack()
 
 # Marco principal
-main_frame = ttk.Frame(root, padding="15")
+main_frame = ttk.Frame(root, padding="15", style="TFrame")
 main_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
 
 # Entrada de pregunta
 label_pregunta = ttk.Label(main_frame, text="Escribe tu pregunta:")
 label_pregunta.grid(row=0, column=0, sticky="w", pady=10)
-text_pregunta = tk.Text(main_frame, height=5, font=("Arial", 12), wrap=tk.WORD, relief="solid", bd=1)
+text_pregunta = tk.Text(main_frame, height=5, font=("Arial", 12), wrap=tk.WORD, relief="solid", bd=1, bg="#3c3c3c", fg="#e1e1e1")
 text_pregunta.grid(row=1, column=0, columnspan=2, sticky="we", padx=10)
 
 # Botón de consulta
@@ -173,7 +174,7 @@ btn_chat.grid(row=2, column=0, columnspan=2, pady=15)
 # Salida de respuesta
 label_respuesta = ttk.Label(main_frame, text="Respuesta:")
 label_respuesta.grid(row=3, column=0, sticky="w", pady=10)
-text_respuesta = scrolledtext.ScrolledText(main_frame, height=15, font=("Arial", 12), wrap=tk.WORD, relief="solid", bd=1)
+text_respuesta = scrolledtext.ScrolledText(main_frame, height=15, font=("Arial", 12), wrap=tk.WORD, relief="solid", bd=1, bg="#3c3c3c", fg="#e1e1e1", insertbackground="#e1e1e1")
 text_respuesta.grid(row=4, column=0, columnspan=2, sticky="nsew", padx=10)
 
 # Configuración de redimensionamiento
