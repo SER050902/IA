@@ -143,8 +143,9 @@ def consultar_ia():
 # Interfaz gráfica
 root = tk.Tk()
 root.title("Sistema Académico con IA")
-root.geometry("850x600")
+root.geometry("850x600")  # Tamaño inicial de la ventana
 root.configure(bg="#f0f0f5")
+root.resizable(False, False)  # Evita redimensionar la ventana en ambos ejes
 
 # Estilo personalizado
 style = ttk.Style()
