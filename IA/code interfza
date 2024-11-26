@@ -15,7 +15,6 @@ DATABASE_PATH = 'students.db'
 
 # Funciones relacionadas con la base de datos
 def connect_to_db():
-    """Conecta a la base de datos SQLite."""
     try:
         return sqlite3.connect(DATABASE_PATH)
     except sqlite3.Error as e:
@@ -23,7 +22,6 @@ def connect_to_db():
         return None
 
 def query_database(student_name=None, class_name=None, module_name=None):
-    """Consulta la base de datos según los parámetros proporcionados."""
     conn = connect_to_db()
     if not conn:
         return "No se pudo establecer conexión con la base de datos."
@@ -86,7 +84,6 @@ def query_database(student_name=None, class_name=None, module_name=None):
 
 # Funciones relacionadas con OpenAI
 def ask_openai(question, context):
-    """Consulta la API de OpenAI con el contexto y la pregunta."""
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4",
@@ -104,7 +101,6 @@ def ask_openai(question, context):
 
 # Función principal
 def handle_question(question):
-    """Procesa la pregunta del usuario, extrae entidades y consulta base de datos o OpenAI."""
     doc = nlp(question)
     student_name = None
     class_name = None
@@ -143,43 +139,42 @@ def consultar_ia():
 # Interfaz gráfica
 root = tk.Tk()
 root.title("Sistema Académico con IA")
-root.geometry("850x600")  # Tamaño inicial de la ventana
-root.configure(bg="#f0f0f5")
-root.resizable(False, False)  # Evita redimensionar la ventana en ambos ejes
+root.geometry("900x600")
+root.configure(bg="#ffffff")
+root.resizable(False, False)
 
-# Estilo personalizado
+# Estilo moderno
 style = ttk.Style()
 style.theme_use("clam")
-style.configure("TLabel", font=("Arial", 12), background="#f0f0f5")
+style.configure("TLabel", font=("Arial", 12), background="#ffffff")
 style.configure("TButton", font=("Arial", 12), background="#0078d7", foreground="white", padding=8)
-style.configure("TFrame", background="#f0f0f5")
-style.configure("Header.TLabel", font=("Arial", 14, "bold"), foreground="#333")
+style.configure("Header.TLabel", font=("Arial", 16, "bold"), foreground="#444")
 
 # Encabezado
-header_frame = ttk.Frame(root, padding="10")
-header_frame.pack(fill=tk.X)
-header_label = ttk.Label(header_frame, text="Sistema Académico con Asistente IA", style="Header.TLabel")
+header_frame = ttk.Frame(root, padding="20", style="TFrame")
+header_frame.pack(fill=tk.X, pady=5)
+header_label = ttk.Label(header_frame, text="Sistema Académico Asistido por IA", style="Header.TLabel")
 header_label.pack()
 
 # Marco principal
-main_frame = ttk.Frame(root, padding="10")
-main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+main_frame = ttk.Frame(root, padding="15")
+main_frame.pack(fill=tk.BOTH, expand=True, padx=15, pady=15)
 
 # Entrada de pregunta
 label_pregunta = ttk.Label(main_frame, text="Escribe tu pregunta:")
-label_pregunta.grid(row=0, column=0, sticky="w", pady=5)
-text_pregunta = tk.Text(main_frame, height=5, font=("Arial", 12), wrap=tk.WORD, bg="#ffffff", relief="solid", bd=1)
-text_pregunta.grid(row=1, column=0, columnspan=2, sticky="we", pady=5)
+label_pregunta.grid(row=0, column=0, sticky="w", pady=10)
+text_pregunta = tk.Text(main_frame, height=5, font=("Arial", 12), wrap=tk.WORD, relief="solid", bd=1)
+text_pregunta.grid(row=1, column=0, columnspan=2, sticky="we", padx=10)
 
 # Botón de consulta
 btn_chat = ttk.Button(main_frame, text="Consultar", command=consultar_ia)
-btn_chat.grid(row=2, column=0, columnspan=2, pady=10)
+btn_chat.grid(row=2, column=0, columnspan=2, pady=15)
 
 # Salida de respuesta
 label_respuesta = ttk.Label(main_frame, text="Respuesta:")
-label_respuesta.grid(row=3, column=0, sticky="w", pady=5)
-text_respuesta = scrolledtext.ScrolledText(main_frame, height=15, font=("Arial", 12), wrap=tk.WORD, bg="#f9f9f9", relief="solid", bd=1)
-text_respuesta.grid(row=4, column=0, columnspan=2, sticky="nsew", pady=5)
+label_respuesta.grid(row=3, column=0, sticky="w", pady=10)
+text_respuesta = scrolledtext.ScrolledText(main_frame, height=15, font=("Arial", 12), wrap=tk.WORD, relief="solid", bd=1)
+text_respuesta.grid(row=4, column=0, columnspan=2, sticky="nsew", padx=10)
 
 # Configuración de redimensionamiento
 main_frame.columnconfigure(0, weight=1)
