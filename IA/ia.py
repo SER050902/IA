@@ -223,52 +223,7 @@ def consultar_ia():
         text_respuesta.insert(tk.END, respuesta)
     else:
         messagebox.showerror("Error", "Por favor, ingresa una pregunta.")
-def verificar_datos():
-    try:
-        # Conexión a la base de datos
-        conn = sqlite3.connect(DATABASE_PATH)
-        cursor = conn.cursor()
 
-        # Listar todas las tablas (opcional, para explorar la base de datos)
-        print("Tablas en la base de datos:")
-        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-        tables = cursor.fetchall()
-        for table in tables:
-            print(f"- {table[0]}")
-
-        print("\nDatos en la tabla 'alumnos':")
-        cursor.execute("SELECT * FROM alumnos;")
-        alumnos = cursor.fetchall()
-        for alumno in alumnos:
-            print(alumno)
-
-        print("\nDatos en la tabla 'clase':")
-        cursor.execute("SELECT * FROM clase;")
-        clases = cursor.fetchall()
-        for clase in clases:
-            print(clase)
-
-        print("\nDatos en la tabla 'modulo':")
-        cursor.execute("SELECT * FROM modulo;")
-        modulos = cursor.fetchall()
-        for modulo in modulos:
-            print(modulo)
-
-        print("\nDatos en la tabla 'profesor':")
-        cursor.execute("SELECT * FROM profesor;")
-        profesores = cursor.fetchall()
-        for profesor in profesores:
-            print(profesor)
-
-        print("\nDatos en la tabla 'horario':")
-        cursor.execute("SELECT * FROM horario;")
-        horarios = cursor.fetchall()
-        for horario in horarios:
-            print(horario)
-
-        conn.close()
-    except sqlite3.Error as e:
-        messagebox.showerror("Error", f"Error al acceder a la base de datos: {e}")
 
 # Interfaz gráfica
 root = tk.Tk()
