@@ -1,9 +1,7 @@
 import tkinter as tk
-from tkinter import ttk, scrolledtext
-from tkinter import messagebox
+from tkinter import ttk, scrolledtext, messagebox
 import sqlite3
 import spacy
-from dateutil.parser import parse
 import os
 import openai
 
@@ -14,19 +12,15 @@ openai.api_key = os.getenv("OPENAI_API_KEY")  # Configura tu clave API en una va
 # Ruta de la base de datos SQLite
 DATABASE_PATH = 'students.db'
 
-
 # Funciones relacionadas con la base de datos
 def connect_to_db():
-    """Conecta a la base de datos SQLite."""
     try:
         return sqlite3.connect(DATABASE_PATH)
     except sqlite3.Error as e:
         messagebox.showerror("Error", f"Error al conectar con la base de datos: {e}")
         return None
 
-
-def query_database(student_name=None, class_name=None, module_name=None):
-    """Consulta la base de datos según los parámetros proporcionados."""
+def query_database(student_name=None, professor_name=None, module_name=None):
     conn = connect_to_db()
     if not conn:
         return "No se pudo establecer conexión con la base de datos."
@@ -35,51 +29,103 @@ def query_database(student_name=None, class_name=None, module_name=None):
         cursor = conn.cursor()
         context = []
 
+        # Consultar información sobre estudiantes
         if student_name:
             cursor.execute("""
-                SELECT clase_id, nombre FROM alumnos WHERE LOWER(nombre) LIKE LOWER(?) 
+                SELECT a.nombre AS estudiante, 
+                       m.modulo AS modulo, 
+                       c.aula AS aula, 
+                       c.piso AS piso, 
+                       h.horario AS horario, 
+                       p.nombre AS profesor
+                FROM alumnos a
+                JOIN clase c ON a.clase = c.id
+                JOIN modulo m ON a.modulo = m.id
+                JOIN profesor p ON m.profesor = p.id
+                LEFT JOIN horario h ON m.id = h.modulo
+                WHERE LOWER(a.nombre) LIKE LOWER(?)
             """, (f'%{student_name}%',))
             students = cursor.fetchall()
 
             if students:
                 for student in students:
-                    class_id = student[0]
-                    cursor.execute("SELECT nombre, aula, piso FROM clases WHERE id=?", (class_id,))
-                    class_info = cursor.fetchone()
-                    if class_info:
-                        context.append(
-                            f"Estudiante: {student[1]}, Clase: {class_info[0]} (Aula: {class_info[1]}, Piso: {class_info[2]})."
-                        )
-                    else:
-                        context.append(f"No se encontró información de clase para el estudiante {student[1]}.")
+                    context.append(
+                        f"Estudiante: {student[0]}, Módulo: {student[1]}, "
+                        f"Aula: {student[2]}, Piso: {student[3]}, "
+                        f"Horario: {student[4] or 'No asignado'}, Profesor: {student[5]}."
+                    )
             else:
                 context.append(f"No se encontró al estudiante {student_name}.")
 
-        if class_name:
-            cursor.execute("SELECT id, aula, piso FROM clases WHERE LOWER(nombre) LIKE LOWER(?)", (f'%{class_name}%',))
-            class_info = cursor.fetchone()
-            if class_info:
-                context.append(f"La clase {class_name} está en el Aula {class_info[1]}, Piso {class_info[2]}.")
-                cursor.execute("SELECT nombre, horario FROM modulos WHERE clase_id=?", (class_info[0],))
-                modules = cursor.fetchall()
-                if modules:
-                    mod_info = ", ".join([f"{module[0]} (Horario: {module[1]})" for module in modules])
-                    context.append(f"Módulos asignados: {mod_info}.")
-                else:
-                    context.append(f"No hay módulos asignados para la clase {class_name}.")
-            else:
-                context.append(f"No se encontró la clase {class_name}.")
+        # Consultar información sobre profesores
+        if professor_name:
+            cursor.execute("""
+                SELECT p.nombre AS profesor, 
+                       m.modulo AS modulo, 
+                       h.horario AS horario
+                FROM profesor p
+                JOIN modulo m ON p.id = m.profesor
+                LEFT JOIN horario h ON m.id = h.modulo
+                WHERE LOWER(p.nombre) LIKE LOWER(?)
+            """, (f'%{professor_name}%',))
+            professors = cursor.fetchall()
 
+            if professors:
+                for prof in professors:
+                    context.append(
+                        f"Profesor: {prof[0]}, Módulo: {prof[1]}, Horario: {prof[2] or 'No asignado'}."
+                    )
+            else:
+                context.append(f"No se encontró al profesor {professor_name}.")
+
+        # Consultar información sobre módulos
         if module_name:
             cursor.execute("""
-                SELECT nombre, horario FROM modulos WHERE LOWER(nombre) LIKE LOWER(?) 
+                SELECT m.modulo AS nombre_modulo, 
+                       h.horario AS horario, 
+                       c.aula AS aula, 
+                       c.piso AS piso, 
+                       p.nombre AS profesor
+                FROM modulo m
+                JOIN clase c ON m.id = c.id
+                LEFT JOIN horario h ON m.id = h.modulo
+                LEFT JOIN profesor p ON m.profesor = p.id
+                WHERE LOWER(m.modulo) LIKE LOWER(?)
             """, (f'%{module_name}%',))
-            module_info = cursor.fetchall()
-            if module_info:
-                for module in module_info:
-                    context.append(f"Módulo: {module[0]}, Horario: {module[1]}.")
+            modules = cursor.fetchall()
+
+            if modules:
+                for module in modules:
+                    context.append(
+                        f"Módulo: {module[0]}, Horario: {module[1] or 'No asignado'}, "
+                        f"Aula: {module[2]}, Piso: {module[3]}, Profesor: {module[4]}."
+                    )
             else:
-                context.append(f"No se encontró el módulo {module_name}.")
+                context.append(f"No se encontró información sobre el módulo '{module_name}'.")
+
+        # Consultar todos los horarios
+        if not student_name and not professor_name and not module_name:
+            cursor.execute("""
+                SELECT m.modulo AS nombre_modulo, 
+                       h.horario AS horario, 
+                       c.aula AS aula, 
+                       c.piso AS piso, 
+                       p.nombre AS profesor
+                FROM horario h
+                JOIN modulo m ON h.modulo = m.id
+                JOIN clase c ON m.id = c.id
+                LEFT JOIN profesor p ON m.profesor = p.id
+            """)
+            all_schedules = cursor.fetchall()
+
+            if all_schedules:
+                for schedule in all_schedules:
+                    context.append(
+                        f"Módulo: {schedule[0]}, Horario: {schedule[1]}, "
+                        f"Aula: {schedule[2]}, Piso: {schedule[3]}, Profesor: {schedule[4]}."
+                    )
+            else:
+                context.append("No se encontraron horarios registrados en la base de datos.")
 
         conn.close()
         return " ".join(context) if context else "No se encontró información."
@@ -90,50 +136,82 @@ def query_database(student_name=None, class_name=None, module_name=None):
 
 # Funciones relacionadas con OpenAI
 def ask_openai(question, context):
-    """Consulta la API de OpenAI con el contexto y la pregunta."""
     try:
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
-                {"role": "system",
-                 "content": "Eres un asistente académico que responde preguntas de forma clara y detallada."},
-                {"role": "user", "content": f"Contexto: {context}\nPregunta: {question}"}
+                {"role": "system", "content": "Eres un asistente académico que responde preguntas."},
+                {"role": "user", "content": f"He consultado una base de datos académica y obtuve esta información: {context}. Con base en esto, responde la pregunta: {question}"}
             ],
             temperature=0.7,
-            max_tokens=300
+            max_tokens=200
         )
         return response.choices[0].message['content'].strip()
     except Exception as e:
         return f"Error al conectar con OpenAI: {e}"
 
-
-# Función principal
 def handle_question(question):
-    """Procesa la pregunta del usuario, extrae entidades y consulta base de datos o OpenAI."""
     doc = nlp(question)
     student_name = None
-    class_name = None
+    professor_name = None
     module_name = None
-    date = None
 
+    # Identificar entidades reconocidas por spaCy
     for ent in doc.ents:
-        if ent.label_ == "PER":
-            student_name = ent.text.strip()
-        elif ent.label_ == "ORG":
-            class_name = ent.text.strip()
-        elif ent.label_ == "MISC":
-            module_name = ent.text.strip()
-        elif ent.label_ == "DATE":
-            try:
-                date = parse(ent.text).date()
-            except ValueError:
-                pass
+        if ent.label_ == "PER":  # Persona
+            if "profesor" in question.lower() or "maestro" in question.lower():
+                professor_name = ent.text.strip()
+            elif "alumno" in question.lower() or "estudiante" in question.lower():
+                student_name = ent.text.strip()
 
-    if student_name or class_name or module_name or date:
-        context = query_database(student_name, class_name, module_name)
+    # Método de respaldo: buscar nombres manualmente si spaCy falla
+    if not student_name and not professor_name and not module_name:
+        conn = connect_to_db()
+        if conn:
+            cursor = conn.cursor()
+
+            # Consultar nombres de estudiantes
+            cursor.execute("SELECT nombre FROM alumnos;")
+            all_students = [row[0].lower() for row in cursor.fetchall()]
+
+            # Consultar nombres de profesores
+            cursor.execute("SELECT nombre FROM profesor;")
+            all_professors = [row[0].lower() for row in cursor.fetchall()]
+
+            # Consultar nombres de módulos
+            cursor.execute("SELECT modulo FROM modulo;")
+            all_modules = [row[0].lower() for row in cursor.fetchall()]
+
+            # Comparar palabras de la pregunta con los nombres en la base de datos
+            tokens = question.lower().split()
+            for token in tokens:
+                if token in all_students:
+                    student_name = token.capitalize()
+                    break
+                elif token in all_professors:
+                    professor_name = token.capitalize()
+                    break
+                elif token in all_modules:
+                    module_name = token.capitalize()
+                    break
+
+            conn.close()
+
+    # Consultar la base de datos según las entidades detectadas
+    if student_name:
+        context = query_database(student_name=student_name)
+        return ask_openai(question, context)
+    elif professor_name:
+        context = query_database(professor_name=professor_name)
+        return ask_openai(question, context)
+    elif module_name:
+        context = query_database(module_name=module_name)
+        return ask_openai(question, context)
+    elif "horario" in question.lower():
+        context = query_database()
         return ask_openai(question, context)
     else:
-        return "No pude identificar información suficiente en tu pregunta. Por favor, especifica mejor."
+        return "No pude identificar suficiente información en tu pregunta. Por favor, sé más específico."
 
 
 # Función de la interfaz para manejar consultas
@@ -145,40 +223,90 @@ def consultar_ia():
         text_respuesta.insert(tk.END, respuesta)
     else:
         messagebox.showerror("Error", "Por favor, ingresa una pregunta.")
+def verificar_datos():
+    try:
+        # Conexión a la base de datos
+        conn = sqlite3.connect(DATABASE_PATH)
+        cursor = conn.cursor()
 
+        # Listar todas las tablas (opcional, para explorar la base de datos)
+        print("Tablas en la base de datos:")
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
+        tables = cursor.fetchall()
+        for table in tables:
+            print(f"- {table[0]}")
 
-# Interfaz gráfica mejorada con ttk
+        print("\nDatos en la tabla 'alumnos':")
+        cursor.execute("SELECT * FROM alumnos;")
+        alumnos = cursor.fetchall()
+        for alumno in alumnos:
+            print(alumno)
+
+        print("\nDatos en la tabla 'clase':")
+        cursor.execute("SELECT * FROM clase;")
+        clases = cursor.fetchall()
+        for clase in clases:
+            print(clase)
+
+        print("\nDatos en la tabla 'modulo':")
+        cursor.execute("SELECT * FROM modulo;")
+        modulos = cursor.fetchall()
+        for modulo in modulos:
+            print(modulo)
+
+        print("\nDatos en la tabla 'profesor':")
+        cursor.execute("SELECT * FROM profesor;")
+        profesores = cursor.fetchall()
+        for profesor in profesores:
+            print(profesor)
+
+        print("\nDatos en la tabla 'horario':")
+        cursor.execute("SELECT * FROM horario;")
+        horarios = cursor.fetchall()
+        for horario in horarios:
+            print(horario)
+
+        conn.close()
+    except sqlite3.Error as e:
+        messagebox.showerror("Error", f"Error al acceder a la base de datos: {e}")
+
+# Interfaz gráfica
 root = tk.Tk()
 root.title("Sistema Académico con IA")
-root.geometry("800x600")
-root.configure(bg="#f5f5f5")  # Fondo claro
+root.geometry("900x600")
+root.configure(bg="#2b2b2b")
+root.resizable(False, False)
 
-# Estilo general
+# Estilo oscuro
 style = ttk.Style()
-style.theme_use("clam")  # Tema moderno
-style.configure("TLabel", font=("Helvetica", 12), background="#f5f5f5")
-style.configure("TButton", font=("Helvetica", 12), background="#0078d7", foreground="white", padding=6)
-style.configure("TFrame", background="#f5f5f5")
+style.theme_use("clam")
+style.configure("TLabel", font=("Arial", 12), background="#2b2b2b", foreground="#e1e1e1")
+style.configure("BoldLabel.TLabel", font=("Arial", 14, "bold"), background="#2b2b2b", foreground="#ffffff")
+style.configure("TButton", font=("Arial", 12), background="#0078d7", foreground="#ffffff", padding=8)
+style.configure("Header.TLabel", font=("Arial", 20, "bold"), foreground="#ffffff")
+style.configure("TText", font=("Arial", 12), foreground="#e1e1e1", background="#1e1e1e")
 
-# Marco principal
-main_frame = ttk.Frame(root, padding="10")
-main_frame.pack(fill=tk.BOTH, expand=True)
+# Etiquetas
+lbl_titulo = ttk.Label(root, text="Sistema Académico con IA", style="Header.TLabel")
+lbl_titulo.pack(pady=20)
 
-# Etiqueta y área de texto para la pregunta
-label_pregunta = ttk.Label(main_frame, text="Escribe tu pregunta:")
-label_pregunta.pack(anchor="w", pady=5)
-text_pregunta = tk.Text(main_frame, height=5, font=("Helvetica", 12), wrap=tk.WORD)
-text_pregunta.pack(fill=tk.X, pady=5)
+lbl_pregunta = ttk.Label(root, text="Ingresa tu pregunta:", style="BoldLabel.TLabel")
+lbl_pregunta.pack(anchor="w", padx=20, pady=(10, 0))
 
-# Botón para enviar la pregunta
-btn_chat = ttk.Button(main_frame, text="Consultar", command=consultar_ia)
-btn_chat.pack(pady=10)
+# Cuadro de texto para la pregunta
+text_pregunta = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=80, height=5, font=("Arial", 12), bg="#1e1e1e", fg="#e1e1e1", insertbackground="white")
+text_pregunta.pack(padx=20, pady=10)
 
-# Área de texto para mostrar la respuesta con barra de desplazamiento
-label_respuesta = ttk.Label(main_frame, text="Respuesta:")
-label_respuesta.pack(anchor="w", pady=5)
-text_respuesta = scrolledtext.ScrolledText(main_frame, height=15, font=("Helvetica", 12), wrap=tk.WORD)
-text_respuesta.pack(fill=tk.BOTH, expand=True, pady=5)
+# Botón para enviar la consulta
+btn_consultar = ttk.Button(root, text="Consultar", command=consultar_ia)
+btn_consultar.pack(pady=10)
 
-# Ejecutar la aplicación
+# Cuadro de texto para la respuesta
+lbl_respuesta = ttk.Label(root, text="Respuesta:", style="BoldLabel.TLabel")
+lbl_respuesta.pack(anchor="w", padx=20, pady=(20, 0))
+
+text_respuesta = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=80, height=15, font=("Arial", 12), bg="#1e1e1e", fg="#e1e1e1", insertbackground="white")
+text_respuesta.pack(padx=20, pady=10)
+
+# Ejecutar la interfaz
 root.mainloop()
