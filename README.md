@@ -58,7 +58,7 @@ Está implementada con **python-tkinter** conectado al modelo **GPT** con la **A
 
 ## Configuración de la API Key
 
-Asegúrate de tener tu propia clave API de OpenAI. Configura la variable de entorno del sistema `OPENAI_API_KEY` con tu clave.
+Asegúrate de tener tu propia clave API de OpenAI. Configura la variable de entorno en el archivo Dockerfile, que se llama `OPENAI_API_KEY` con tu clave.
 
 ## Ejemplos de Consultas
 
