@@ -85,3 +85,4 @@ Asegúrate de tener tu propia clave API de OpenAI. Configura la variable de ento
       - Ejemplo: En lugar de "Dime sobre Jose Pedro", usa "Dime sobre el profesor Jose Pedro".
   - **Una clave por consulta:** La IA solo puede procesar una clave a la vez.
       - Ejemplo: En "Dime sobre el profesor Gines y profesor Alejandro", solo se buscará información sobre Alejandro.
+  
