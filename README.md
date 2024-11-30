@@ -4,7 +4,7 @@
 
 La aplicación **TerSIA** automatiza y centraliza la búsqueda de información académica para estudiantes, ofreciendo una experiencia intuitiva, rápida y eficiente que optimiza el acceso a recursos educativos y fomenta un aprendizaje dinámico e interactivo.
 
-Está implementada con **python-tkinter** conectado al modelo **GPT** con la **API** de OpenAI. <span style="color:red">Requiere una clave API propia y una conexión a Internet.</span>
+Está implementada con **python-tkinter** conectado al modelo **GPT** con la **API** de OpenAI. Requiere una clave API propia y una conexión a Internet.</span>
 
 
 ## Herramientas de Desarrollo
