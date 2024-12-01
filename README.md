@@ -4,8 +4,7 @@
 
 La aplicación **TerSIA** automatiza y centraliza la búsqueda de información académica para estudiantes, ofreciendo una experiencia intuitiva, rápida y eficiente que optimiza el acceso a recursos educativos y fomenta un aprendizaje dinámico e interactivo.
 
-Está implementada con **python-tkinter** conectado al modelo **GPT** con la **API** de OpenAI. Requiere una clave API propia y una conexión a Internet.</span>
-
+Está implementada con **python-tkinter** conectado al modelo **GPT** con la **API** de OpenAI. Requiere una clave API propia y una conexión a Internet.
 
 ## Herramientas de Desarrollo
 
@@ -15,19 +14,19 @@ Está implementada con **python-tkinter** conectado al modelo **GPT** con la **A
   - **Base de datos:** SQLite
   - **Contenedor:** Docker
 
-### **Librerías Python Utilizadas**
-| **Librería**    | **Descripción**                                                                 |
-|------------------|---------------------------------------------------------------------------------|
-| `tkinter`        | Crear interfaces gráficas de usuario (GUI).                                    |
-| `ttk`            | Submódulo de tkinter con componentes gráficos mejorados.                      |
-| `scrolledtext`   | Crear cuadros de texto con barras de desplazamiento.                          |
-| `messagebox`     | Mostrar cuadros de mensajes, como alertas o notificaciones.                   |
-| `sqlite3`        | Interactuar con bases de datos SQLite.                                         |
-| `spacy`          | Procesamiento de lenguaje natural (NLP), optimizando la interacción con GPT.  |
-| `os`             | Realizar operaciones con archivos y directorios del sistema operativo.        |
-| `openai`         | Interactuar con la API de OpenAI para integrar la inteligencia artificial.     |
+### Librerías Python Utilizadas
 
----
+| Librería        | Descripción                                                                                                                               |
+|-----------------|-------------------------------------------------------------------------------------------------------------------------------------------|
+| `tkinter`       | Crear interfaces gráficas de usuario (GUI).                                                                                             |
+| `ttk`           | Submódulo de tkinter con componentes gráficos mejorados.                                                                                   |
+| `scrolledtext` | Crear cuadros de texto con barras de desplazamiento.                                                                                     |
+| `messagebox`   | Mostrar cuadros de mensajes, como alertas o notificaciones.                                                                               |
+| `sqlite3`       | Interactuar con bases de datos SQLite.                                                                                                   |
+| `spacy`         | Procesamiento de lenguaje natural (NLP), optimizando la interacción con GPT.                                                            |
+| `os`            | Realizar operaciones con archivos y directorios del sistema operativo.                                                                   |
+| `openai`        | Interactuar con la API de OpenAI para integrar la inteligencia artificial.                                                                |
+
 
 ## Ejecución
 
@@ -43,7 +42,7 @@ Está implementada con **python-tkinter** conectado al modelo **GPT** con la **A
     sudo docker build -t tersia .
     ```
 
-3.  **Permitir acceso a la pantalla:**
+3.  **Permitir acceso a la pantalla (solo Linux):**
 
     ```bash
     xhost +local:docker
@@ -55,11 +54,9 @@ Está implementada con **python-tkinter** conectado al modelo **GPT** con la **A
     sudo docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix tersia
     ```
 
-**Nota:** Reemplaza `<URL del repositorio>` con la URL real del repositorio.
-
 ## Configuración de la API Key
 
-Asegúrate de tener tu propia clave API de OpenAI. Configura la variable de entorno en el archivo Dockerfile, que se llama `OPENAI_API_KEY` con tu clave.
+Asegúrate de tener tu propia clave API de OpenAI. Configura la variable de entorno del api (llamado `OPENAI_API_KEY`) en el archivo Dockerfile con tu clave.
 
 ## Ejemplos de Consultas
 
@@ -85,4 +82,3 @@ Asegúrate de tener tu propia clave API de OpenAI. Configura la variable de ento
       - Ejemplo: En lugar de "Dime sobre Jose Pedro", usa "Dime sobre el profesor Jose Pedro".
   - **Una clave por consulta:** La IA solo puede procesar una clave a la vez.
       - Ejemplo: En "Dime sobre el profesor Gines y profesor Alejandro", solo se buscará información sobre Alejandro.
-  
