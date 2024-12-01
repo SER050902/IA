@@ -42,7 +42,7 @@ Está implementada con **python-tkinter** conectado al modelo **GPT** con la **A
     sudo docker build -t tersia .
     ```
 
-3.  **Permitir acceso a la pantalla (solo Linux):**
+3.  **Permitir acceso a la pantalla (solo Linux,si eres Windows...):**
 
     ```bash
     xhost +local:docker
@@ -53,6 +53,15 @@ Está implementada con **python-tkinter** conectado al modelo **GPT** con la **A
     ```bash
     sudo docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix tersia
     ```
+
+## Instale el servidor X11
+Windows no es compatible con X11 de forma nativa, por lo que se requiere un servidor X11 para manejar la representación de la GUI.
+Enlace...
+
+Descargue e instale VcXsrv.
+Una vez completada la instalación, inicie VcXsrv y seleccione las siguientes configuraciones:
+Modo de visualización: seleccione Varias ventanas.
+Opciones de inicio: Habilite Deshabilitar control de acceso.
 
 ## Configuración de la API Key
 
