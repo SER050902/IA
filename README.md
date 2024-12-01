@@ -33,7 +33,7 @@ Está implementada con **python-tkinter** conectado al modelo **GPT** con la **A
 1.  **Clonar el repositorio:**
 
     ```bash
-    git clone <URL del repositorio>
+    git clone https://github.com/SER050902/IA.git
     ```
 
 2.  **Construir la imagen de Docker:**
