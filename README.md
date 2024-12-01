@@ -27,36 +27,33 @@ Está implementada con **python-tkinter** conectado al modelo **GPT** con la **A
 | `os`            | Realizar operaciones con archivos y directorios del sistema operativo.                                                                   |
 | `openai`        | Interactuar con la API de OpenAI para integrar la inteligencia artificial.                                                                |
 
-
 ## Ejecución
 
-1.  **Clonar el repositorio:**
+1.  **Clonar el repositorio:**  
 
     ```bash
     git clone https://github.com/SER050902/IA.git
     ```
 
-2.  **Construir la imagen de Docker:**
+2.  **Construir la imagen de Docker:**  
 
     ```bash
     sudo docker build -t tersia .
     ```
 
-3.  **Permitir acceso a la pantalla (solo Linux,si eres Windows...):**
+3.  **Permitir acceso a la pantalla (solo Linux):**  
 
     ```bash
     xhost +local:docker
     ```
 
-4.  **Ejecutar el contenedor:**
+    Si estás en **Windows**, consulta la sección de [**Instale el servidor X11**](#instale-el-servidor-x11).
+
+4.  **Ejecutar el contenedor:**  
 
     ```bash
     sudo docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix tersia
     ```
-
-## Instale el servidor X11
-Windows no es compatible con X11 de forma nativa, por lo que se requiere un servidor X11 para manejar la representación de la GUI.
-Para poder permitir el acceso a la pantalla Docker, descarga el software [**VcXsrv**](./Instalación%20VcXsrv.md).
 
 ## Configuración de la API Key
 
@@ -79,6 +76,10 @@ Asegúrate de tener tu propia clave API de OpenAI. Configura la variable de ento
 
   - "Dime el horario de los módulos"
   - "¿Qué horario hay en el módulo de Hardware?"
+
+## Instale el servidor X11
+Windows no es compatible con X11 de forma nativa, por lo que se requiere un servidor X11 para manejar la representación de la GUI.  
+Para poder permitir el acceso a la pantalla Docker, descarga el software [**VcXsrv**](./Instalación%20VcXsrv.md).
 
 ## Consideraciones
 
