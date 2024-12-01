@@ -56,12 +56,7 @@ Está implementada con **python-tkinter** conectado al modelo **GPT** con la **A
 
 ## Instale el servidor X11
 Windows no es compatible con X11 de forma nativa, por lo que se requiere un servidor X11 para manejar la representación de la GUI.
-Enlace...
-
-Descargue e instale VcXsrv.
-Una vez completada la instalación, inicie VcXsrv y seleccione las siguientes configuraciones:
-Modo de visualización: seleccione Varias ventanas.
-Opciones de inicio: Habilite Deshabilitar control de acceso.
+Para poder permitir el acceso a la pantalla Docker, descarga el software [**VcXsrv**](./Instalación%20VcXsrv.md).
 
 ## Configuración de la API Key
 
