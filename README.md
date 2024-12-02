@@ -41,15 +41,18 @@ Está implementada con **python-tkinter** conectado al modelo **GPT** con la **A
     sudo docker build -t tersia .
     ```
 
-3.  **Permitir acceso a la pantalla (solo Linux):**  
+3.  **Permitir acceso servidor x11 a la pantalla (solo Linux):**  
 
     ```bash
     xhost +local:docker
     ```
 
-    Si estás en **Windows**, consulta la sección de [**Instale el servidor X11**](#instale-el-servidor-x11).
+    Si estás en **Windows**, consulta la sección de [**Instale el servidor X11**](#instale-el-servidor-x11) y:
+     ```bash
+    $env:DISPLAY="host.docker.internal:0"
+    ```
 
-4.  **Ejecutar el contenedor:**  
+5.  **Ejecutar el contenedor:**  
 
     ```bash
     sudo docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix tersia
