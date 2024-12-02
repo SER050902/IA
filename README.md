@@ -10,7 +10,7 @@ Está implementada con **python-tkinter** conectado al modelo **GPT** con la **A
 
   - **Lenguaje:** Python
   - **Interfaz gráfica:** tkinter
-  - **Modelo IA:** GPT
+  - **Modelo IA:** GPT 4
   - **Base de datos:** SQLite
   - **Contenedor:** Docker
 
