@@ -58,6 +58,11 @@ Está implementada con **python-tkinter** conectado al modelo **GPT** con la **A
     sudo docker run -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix tersia
     ```
 
+    Si estás en **Windows**:
+     ```bash
+    docker run -e DISPLAY=$env:DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix tersia
+    ```
+
 ## Configuración de la API Key
 
 Asegúrate de tener tu propia clave API de OpenAI. Configura la variable de entorno del api (llamado `OPENAI_API_KEY`) en el archivo Dockerfile con tu clave.
